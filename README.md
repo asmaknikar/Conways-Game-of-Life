@@ -13,3 +13,5 @@ Hashlife is the most efficient algorithm designed to handle Conways game of life
 
 ![image info](./hashlife.png)
 
+## Usage
+` python conway.py [BREEDER MAP] --skip=1 --sleep=0 --vanilla `
