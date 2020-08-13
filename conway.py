@@ -325,14 +325,14 @@ if __name__ == "__main__":
         sk =0
         init_t = time.perf_counter()
         while pat:
-            pat = vanilla_algo(pat)
             sk+=1
             if(sk%args.skip==0):
                 print_node(construct(pat))
-                print("Step:",sk,"time",time.perf_counter()-init_t)
+                print("Step:",sk-1,"time",time.perf_counter()-init_t)
                 print('\n','---------------------------')
                 time.sleep(args.sleep)
                 init_t = time.perf_counter()
+            pat = vanilla_algo(pat)
 
     # print(f"Computation took {t*1000.0:.1f}ms")
     # print(successor.cache_info())
