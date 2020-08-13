@@ -5,9 +5,11 @@ from collections import Counter
 
 def vanilla_algo(pts):
     ns = Counter(
-        [(x + a, y + b) for x, y in pts for a in [-1, 0, 1] for b in [-1, 0, 1]]
+        [(x + a, y + b) for x, y in pts for a in [-1, 0, 1] for b in [-1, 0, 1] if(not(a==0 and b==0))]
     )
-    return Counter([p for p in ns if ns[p] == 3 or (ns[p] == 4 and p in pts)])
+    # print(pts)
+    # print(ns)
+    return [p for p in ns if ns[p] == 3 or (ns[p] == 2 and p in pts)]
 
 
 # The base quadtree node
@@ -198,6 +200,7 @@ def print_node(node):
     Print out a node, fully expanded    
     """
     points = expand(crop(node))
+    print(node)
     px, py = 0, 0
     for x, y, gray in sorted(points, key=lambda x: (x[1], x[0])):
         while y > py:
@@ -208,6 +211,7 @@ def print_node(node):
             print(" ", end="")
             px += 1
         print("*", end="")
+        # print(x,y,gray)
 
 
 def is_padded(node):
@@ -272,7 +276,7 @@ def advance(node, n):
     while n > 0:
         bits.append(n & 1)
         n = n >> 1
-        node = centre(node)
+    node = centre(node)
 
     # apply the successor rule
     for k, bit in enumerate(reversed(bits)):
@@ -291,41 +295,44 @@ if __name__ == "__main__":
     parser.add_argument("filepath",type=str,help="File containing feeder pa or list of on coordinates")
     parser.add_argument('-t','--tuples',help="If the file has tuples",action="store_true")
     parser.add_argument("-v", "--vanilla", help="vanilla method",action="store_true")
-    parser.add_argument('--skip',default=1,help='Iterations to skip in every step')
-    parser.add_argument('--sleep',default=0,help='sleep while printing')
+    parser.add_argument('--skip',type=int,default=1,help='Iterations to skip in every step')
+    parser.add_argument('--sleep',type=float,default=0,help='sleep while printing')
     args = parser.parse_args()
     print(args)
     
     if(not args.tuples):
-        file = open('./test.txt')
-        arr = np.array([[int(char) for char in s.strip()] for s in file.readlines()]).T
+        file = open(args.filepath)
+        arr = np.array([[int(char) for char in s.strip()] for s in file.readlines() if not(len(s.strip())==0)]).T
+        # print(arr)
         pat = list(zip(np.where(arr==1)[0],np.where(arr==1)[1]))
         # print(arr,pat)
         file.close()
     temp = construct(pat)
-    print(temp)
+    print_node(temp)
     if(not args.vanilla):
         init_t = time.perf_counter()
+        step = 0
         while temp.n>0:
-            print_node(temp)
-            print('\n','--------------------------')
-            print(time.perf_counter()-init_t)
-            time.sleep(args.sleep)
             temp = advance(temp, args.skip)
+            step+=args.skip
+            print_node(temp)
+            print("Step:",step,"time",time.perf_counter()-init_t)
+            print('\n','--------------------------')
+            time.sleep(args.sleep)
             init_t = time.perf_counter()
             # t = time.perf_counter() - init_t
     else:
         sk =0
         init_t = time.perf_counter()
         while pat:
+            pat = vanilla_algo(pat)
             sk+=1
             if(sk%args.skip==0):
                 print_node(construct(pat))
+                print("Step:",sk,"time",time.perf_counter()-init_t)
                 print('\n','---------------------------')
-                print(time.perf_counter()-init_t)
                 time.sleep(args.sleep)
                 init_t = time.perf_counter()
-            pat = vanilla_algo(pat)
 
     # print(f"Computation took {t*1000.0:.1f}ms")
     # print(successor.cache_info())

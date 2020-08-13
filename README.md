@@ -4,6 +4,10 @@ Conways game of life is a cellular automaton game driven by the following rules
 *  Any dead cell with three live neighbours becomes a live cell.
 *  All other live cells die in the next generation. Similarly, all other dead cells stay dead.
 
+which translates to:
+* Any cell with three neighbours is alive
+* Any live cell with two neighbours is survives
+
 ## Algorithms
 ### Vanilla Algorithm
 In the vanilla aglorithm we just iteratively calculate the neighbours and apply the rules to see if a cell survives or dies. The function ` vanilla_algo ` works in single steps in the above manner to propagate through the game.
