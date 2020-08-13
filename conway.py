@@ -3,7 +3,7 @@ from functools import lru_cache
 from collections import Counter
 
 
-def baseline_life(pts):
+def vanilla_algo(pts):
     ns = Counter(
         [(x + a, y + b) for x, y in pts for a in [-1, 0, 1] for b in [-1, 0, 1]]
     )
@@ -325,7 +325,7 @@ if __name__ == "__main__":
                 print(time.perf_counter()-init_t)
                 time.sleep(args.sleep)
                 init_t = time.perf_counter()
-            pat = baseline_life(pat)
+            pat = vanilla_algo(pat)
 
     # print(f"Computation took {t*1000.0:.1f}ms")
     # print(successor.cache_info())
